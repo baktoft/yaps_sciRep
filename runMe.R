@@ -13,6 +13,8 @@ set.seed(42) #for reproducible results
 #load required packages - install if necessary
 library(zoo)
 library(TMB) 
+# To test TMB installation
+runExample(all=TRUE)
 
 #source support functions
 source('supportFuncs.R')
