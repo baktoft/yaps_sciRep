@@ -15,7 +15,8 @@ getParams <- function(datTmb){
 		top = na.approx(apply(datTmb$toa, 2, function(k) {median(k[k != -9999])}), rule=2),								#time of ping
 		ss=rnorm(ncol(datTmb$toa), 1415, 5),																			#speed of sound
 		logD_xy = -2,				#diffusivity of transmitter movement (D_xy in ms)
-		logD_b = -15,				#diffusivity of burst interval (D_b in ms)
+		# logD_b = -15,				#diffusivity of burst interval (D_b in ms)
+		logSigma_bi = -5,			#sigma  burst interval (sigma_bi in ms)
 		logD_v = -3,				#diffusivity of speed of sound (D_v in ms)
 		logSigma_toa = -8,			#sigma for Gaussian 
 		logScale = -3,				#scale parameter for t-distribution
@@ -27,17 +28,19 @@ getParams <- function(datTmb){
 #Inits should be in a credible range...
 getInits <- function() {
 	init_logD_xy <- -2
-	init_logD_b <- -15
+	# init_logD_b <- -15
+	init_logSigma_bi <- -5
 	init_logD_v <- -10
 	init_logSigma_toa <- -5
 	init_logScale <- -1
 	init_log_t_part <- -2
-	inits <- c(init_logD_xy, init_logD_b, init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
+	# inits <- c(init_logD_xy, init_logD_b, init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
+	inits <- c(init_logD_xy, init_logSigma_bi, init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
 	return(inits)
 }
 
 
-runYAPS <- function(inits, params, silent){
+runYAPS <- function(datTmb,inits, params, silent){
 	#Compile and run TMB-model
 	dyn.load(dynlib("yaps"))
 	obj <- MakeADFun(datTmb,params,DLL="yaps",random=c("XY","ss","top"),inner.control = list(maxit = 500000), silent=silent)

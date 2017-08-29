@@ -1,10 +1,11 @@
-################################################################################################################################################################################################
+################################################################################################################################################################################################ 
 #	https://github.com/baktoft/yaps_sciRep
-#	Baktoft, Gjelland, Økland and Thygesen (2017). Time-of-arrival based positioning of aquatic animals using YAPS (Yet Another Positioning System).
+#	Baktoft, Gjelland, Økland and Thygesen (2017). Positioning of aquatic animals based on Time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver).
 #	Example code to reproduce YAPS-results presented in figure 5 from the manuscript. Position estimation is based on raw time-of-arrival data obtained from a tow-track conducted in the field.
 #	TMB needs to be downloaded and installed beforehand - see https://github.com/kaskr/adcomp/wiki/Download
 ################################################################################################################################################################################################
-#	This example file should be able to run trouble free, once TMB is installed. Tested on Windows 7, using R x64 3.3.1. 
+#	This example file should be able to run trouble free, once TMB is installed. 
+#	Tested on Windows 7 using R x64 3.3.1; Windows 10 using R x64 3.4.1; Ubuntu 16.04.3 LTS using R 3.4.1
 #	In case of problems, please contact: hba@aqua.dtu.dk or submit as an issue on github. Thanks!
 ################################################################################################################################################################################################
 rm(list=ls())
@@ -14,7 +15,7 @@ set.seed(42) #for reproducible results
 library(zoo)
 library(TMB) 
 # To test TMB installation
-runExample(all=TRUE)
+# runExample(all=TRUE)
 
 #source support functions
 source('supportFuncs.R')
@@ -29,8 +30,8 @@ toa <- t(as.matrix(toa))
 
 #We suggest using a sub-sample for first testing (e.g. first 500 pings) as computation time is faster
 #first toa-observation to include
-nstart <- 1	
-#number of pings to include - increase to 3244 for complete track. Don't go below ~100 as number of detecting hydrophones is quite low in the beginning of the track (often <3 hydrophones detecting each ping), which can cause numerical problems. 
+nstart <- 1
+#number of pings to include - increase to 3244 for complete track. Be carefull if going below ~100 as number of detecting hydrophones is quite low in the beginning of the track (often <3 hydrophones detecting each ping); too many of these can cause numerical problems. 
 n <- 1000
 nmax <- min(n + nstart, ncol(toa))	#last toa-observation to include
 
@@ -66,9 +67,8 @@ inits <- getInits()
 compile("yaps.cpp")
 
 #Run YAPS-model and get results - can take a while depending on size of toa
-yapsRes <- runYAPS(inits, params, silent=TRUE)
+yapsRes <- runYAPS(datTmb, inits, params, silent=TRUE)
 
 #Plot results and compare to gps and umap
 
 plotRes(yapsRes)
-

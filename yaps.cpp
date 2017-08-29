@@ -14,9 +14,9 @@ Type objective_function<Type>::operator() ()
 
 	PARAMETER(logD_xy);    		// Diffusivity of fish
 	Type D_xy = exp(logD_xy);
-
-	PARAMETER(logD_b);    		// Diffusivity of burst intervals
-	Type D_b = exp(logD_b);
+	
+	PARAMETER(logSigma_bi);		// Sigma for burst interval
+	Type sigma_bi = exp(logSigma_bi);
 
 	PARAMETER(logD_v);    		// Diffusivity of sound speed
 	Type D_v = exp(logD_v);
@@ -80,7 +80,7 @@ Type objective_function<Type>::operator() ()
 		} else if (i == 1){
 			nll -= dnorm(top(1),Type(2.0),Type(4.0),true);
 		} else {
-			nll -= dnorm(top(i)-2*top(i-1)+top(i-2), Type(0),sqrt(2*D_b), true);
+			nll -= dnorm(top(i)-2*top(i-1)+top(i-2), Type(0),sigma_bi, true);
 		}
 	}
 	return nll;
